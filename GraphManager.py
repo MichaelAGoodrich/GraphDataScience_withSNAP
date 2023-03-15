@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 
 class GraphManager:
     def __init__(self):
-        self.G = nx.empty_graph()
+        self.G = nx.empty_graph(create_using=nx.DiGraph)
     def addNodes(self,node_set):
         self.G.add_nodes_from(node_set)
     def addEdges(self,edge_set):
