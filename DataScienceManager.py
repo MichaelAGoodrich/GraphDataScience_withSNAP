@@ -26,25 +26,45 @@ class DataScienceManager:
         self.graphDatabase.showPlot(title = title, figure_number = self.figure_number,wait_for_button=False)
         self.figure_number +=1
         self.graphDatabase.pause()
+    
     def ShowAllBipartiteGraphs(self):
         category_2 = 'name'
-        for category_1 in {'genre','writers','directors','casts'}:
-            graphManager = GraphManager(directed_graph=False)
-            edges = self.database.get_edges(category_1,category_2)
-            print("There are ",len(edges)," edges between movies and ",category_1," in the database")
-            graphManager.addEdges(edges)
-            title = "Links between " + category_1 + " and " + category_2
-            graphManager.showPlot(title = title, figure_number = self.figure_number,wait_for_button=False)
+        #for category_1 in {'genre','writers','directors','casts'}:
+        for category_1 in {'genre','writers','directors'}:
+            title = "Links between " + category_1 + " and movie"
+            self.graphDatabase.plotSubgraph(category_1,'rank',title = title, figure_number = self.figure_number,with_labels=False)
             self.figure_number +=1
-        graphManager.pause()
+        #for category_1 in {'genre','writers','directors','casts'}:
+        #    graphManager = GraphManager(directed_graph=False)
+        #    edges = self.database.getEdges(category_1,category_2)
+        #    print("There are ",len(edges)," edges between movies and ",category_1," in the database")
+        #    graphManager.addEdges(edges)
+        #    title = "Links between " + category_1 + " and " + category_2
+        #    graphManager.showPlot(title = title, figure_number = self.figure_number)
+        #    self.figure_number +=1
+        self.graphDatabase.pause()
+    def ShowSubGraph(self,category):
+        #for category in {'genre','writers','directors','casts'}:
+        self.graphDatabase.plotSubgraph(category,'rank',with_labels=False)
+        self.graphDatabase.pause()
+    def ShowProjection(self,category):
+        self.graphDatabase.plotProjection(category)
+        self.graphDatabase.pause()
 
     ###################
     # Private Methods #
     ###################
     def __initialize_graphDatabaseManager(self):
-        category_2 = 'name'
         graphManager = GraphManager(directed_graph=False)
+        # Step 1: Initialize node set
+        for category in {'genre','writers','directors','casts','rank'}:
+            node_set = self.database.getNodesOfType(category)
+            graphManager.addNodes(node_set,category)
+        
+        # Step 2: Initialize edge set
+        category_2 = 'rank'
         for category_1 in {'genre','writers','directors','casts'}:
-            edges = self.database.get_edges(category_1,category_2)
+            edges = self.database.getEdges(category_1,category_2)
             graphManager.addEdges(edges)
         return graphManager
+    

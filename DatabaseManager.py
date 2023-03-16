@@ -37,13 +37,25 @@ class DatabaseManager:
             set_of_rankings.add(str(movie_rankings[i]))
         print("There are ",len(set_of_rankings),"movies in the database")
         return set_of_rankings
-    def get_edges(self,category_1, category_2):
+    def getNodesOfType(self,node_type):
+        ### Returns a dictionary indexed by node_type with corresponding label 
+        if node_type not in set(self.dataframe.columns): raise ValueError
+        node_set = set()
+        entries = self.dataframe[node_type]
+        for i in range(len(entries)):
+            if node_type in {'genre','writers','directors','casts'}:
+                refined_entries = entries[i].split(',')
+                for r_entry in refined_entries:
+                    node_set.add(r_entry)
+            else: node_set.add(entries[i])
+        return node_set
+        
+
+    def getEdges(self,category_1, category_2):
         """ Oh, this method is such ugly code! """
         ### Step 1: Error check
         if category_1 not in set(self.dataframe.columns) or category_2 not in set(self.dataframe.columns): raise ValueError
         if category_1 == category_2: raise ValueError
-        if category_2 == 'name': category_2 = "rank"
-        if category_1 == "name": category_1 = "rank"
         
         ### Step 2: Extract multiple entities from with a category if 
         ### the category is genre, writers, directors, or casts

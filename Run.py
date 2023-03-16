@@ -11,5 +11,7 @@ from DataScienceManager import DataScienceManager
 def main():
     manager = DataScienceManager('databases/IMDB Top 250 Movies.csv')
     #manager.ShowAllBipartiteGraphs()
-    manager.ShowUnifiedGraph()
+    #manager.ShowSubGraph('casts')
+    manager.ShowProjection('rank')
+    #manager.ShowUnifiedGraph()
 main()
