@@ -47,8 +47,10 @@ class DataScienceManager:
         #for category in {'genre','writers','directors','casts'}:
         self.graphDatabase.plotSubgraph(category,'rank',with_labels=False)
         self.graphDatabase.pause()
-    def ShowProjection(self,category):
-        self.graphDatabase.plotProjection(category)
+    def ShowProjection(self,category,biggest_component = True):
+        title = "Relationships between movie " + str(category)
+        self.graphDatabase.plotProjection(category,title=title,figure_number = self.figure_number,biggest_component=True)
+        self.figure_number +=1
         self.graphDatabase.pause()
 
     ###################
