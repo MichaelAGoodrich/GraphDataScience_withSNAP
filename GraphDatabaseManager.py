@@ -8,7 +8,7 @@
     March 2023
 """
 import networkx as nx
-import matplotlib as mpl
+#import matplotlib as mpl
 from matplotlib import pyplot as plt
 
 class GraphManager:

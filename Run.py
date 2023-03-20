@@ -1,4 +1,11 @@
-""" Main functions for extracting nodes and edges from movie database
+""" Main functions for extracting nodes and edges from movie database.
+
+    Much of the code here is patterned after chapter 2 in
+        Graph Data Science with Neo4j
+        Estelle Scifo, Packt Publishing Ltd, 2023
+
+    Code designed around kaggle dataset
+        https://www.kaggle.com/datasets/themrityunjaypathak/imdb-top-100-movies
 
     Michael A. Goodrich
     CS 575
