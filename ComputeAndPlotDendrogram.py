@@ -1,8 +1,8 @@
-""" Dendogram
+""" Dendrogram
 
 Mike Goodrich
 Brigham Young University
-February 2022
+February 2022. Updated March 2023
 
 Code adapted from
 https://stackoverflow.com/questions/59821151/plot-the-dendrogram-of-communities-found-by-networkx-girvan-newman-algorithm 
@@ -15,68 +15,27 @@ import networkx as nx
 from itertools import chain, combinations
 #from scipy.cluster.hierarchy import dendrogram
 
-def get_NCM_Figure4_2(two_color = True):
-    G = nx.Graph()
-    G.add_nodes_from(range(1,10))
-    color_map = []
-    if two_color == True:
-        G.nodes[1]['type'] = 'm'; color_map.append('m')
-        G.nodes[2]['type'] = 'm'; color_map.append('m')
-        G.nodes[3]['type'] = 'm'; color_map.append('m')
-        G.nodes[4]['type'] = 'm'; color_map.append('m')
-        G.nodes[5]['type'] = 'm'; color_map.append('m')
-        G.nodes[6]['type'] = 'm'; color_map.append('m')
-        G.nodes[7]['type'] = 'c'; color_map.append('c')
-        G.nodes[8]['type'] = 'c'; color_map.append('c')
-        G.nodes[9]['type'] = 'c'; color_map.append('c')
-    else:
-        G.nodes[1]['type'] = 'm'; color_map.append('m')
-        G.nodes[2]['type'] = 'm'; color_map.append('m')
-        G.nodes[3]['type'] = 'm'; color_map.append('m')
-        G.nodes[4]['type'] = 'm'; color_map.append('y')
-        G.nodes[5]['type'] = 'm'; color_map.append('y')
-        G.nodes[6]['type'] = 'm'; color_map.append('y')
-        G.nodes[7]['type'] = 'c'; color_map.append('c')
-        G.nodes[8]['type'] = 'c'; color_map.append('c')
-        G.nodes[9]['type'] = 'c'; color_map.append('c')
-    G.add_edges_from([[1,2],[1,3],[1,4],[1,5],[2,3],[2,4],[2,7],[2,8]])
-    G.add_edges_from([[3,4],[4,5],[4,6],[4,7],[5,6],[6,7],[6,9],[7,8],[7,9],[8,9]])
-    pos = nx.nx_agraph.graphviz_layout(G,prog='neato')
-    pos[3] = (75,140)
-    pos[1] = (58,190)
-    return G,color_map,pos
-
-def get_NCM_Figure3_14():
-    G = nx.Graph()
-    G.add_nodes_from(range(0,14))
-    G.add_edges_from([(0,1),(0,2),(1,2),(3,4),(3,5),(4,5),(8,9),(8,10),(9,10),(11,12),(11,13),(12,13),(2,6),(5,6),(7,8),(7,11),(6,7)])
-    color_map = ['y' for node in G.nodes]
-    pos = nx.nx_agraph.graphviz_layout(G,prog='neato')
-    return G,color_map,pos
 
 class DendrogramHandler:
     def __init__(self,G):
         self.G = G
-        self.communities = self._getGirvanNewmanCommunities()
-        self.node_id_to_children, self.node_labels = self._getNode_id_to_children_dict()
-        self.subset_rank_dict = self._getSubset_rank_dict()
-        self.Z, self.leaves = self._getLinkMatrix()
+        self.communities = self.__getGirvanNewmanCommunities()
+        # TODO: make this so it can use Louvain communities
+        self.node_id_to_children, self.node_labels = self.__getNode_id_to_children_dict()
+        self.subset_rank_dict = self.__getSubset_rank_dict()
+        self.Z, self.leaves = self.__getLinkMatrix()
 
     """ Public methods """
     def getLinkMatrix(self): return self.Z
-    #def getAll(self): return self.Z, self.leaves, self.node_labels
     def getLinkMatrixLabels(self): return [self.node_labels[node_id] for node_id in self.leaves]
-    #def getLeaves(self): return self.leaves
-    #def getNodeLabels(self): return self.node_labels
-    
-
+     
     """ Private methods """
-    def _getGirvanNewmanCommunities(self):
+    def __getGirvanNewmanCommunities(self):
         # Get communities using edge betweenness algorithm from Girvan and Newman
         communities = list(nx.algorithms.community.centrality.girvan_newman(self.G))
-        #tuple(sorted(c) for c in communities) # uncomment if you want to print out set of ocmmunities
+        #tuple(sorted(c) for c in communities) # uncomment if you want to print out set of communities
         return communities
-    def _getNode_id_to_children_dict(self):
+    def __getNode_id_to_children_dict(self):
         node_id = 0
         init_node2community_dict = {node_id: self.communities[0][0].union(self.communities[0][1])}
         for comm in self.communities:
@@ -102,7 +61,7 @@ class DendrogramHandler:
                 node_labels[node_id] = ''
         return node_id_to_children, node_labels
 
-    def _getSubset_rank_dict(self):
+    def __getSubset_rank_dict(self):
         # also needing a subset to rank dict to later know within all k-length merges which came first
         subset_rank_dict = dict()
         rank = 0
@@ -113,7 +72,7 @@ class DendrogramHandler:
                     rank += 1
         subset_rank_dict[tuple(sorted(chain.from_iterable(self.communities[-1])))] = rank
         return subset_rank_dict 
-    def _getLinkMatrix(self):
+    def __getLinkMatrix(self):
         # finally using @mdml's magic, slightly modified:
         G           = nx.DiGraph(self.node_id_to_children)
         nodes       = G.nodes()
@@ -144,13 +103,13 @@ class DendrogramHandler:
             for y in children[1:]:
                 z = tuple(sorted(subtree[x] + subtree[y]))
                 i, j = index[tuple(sorted(subtree[x]))], index[tuple(sorted(subtree[y]))]
-                Z.append([i, j, self._get_merge_height(subtree[n]), len(z)]) # <-- float is required by the dendrogram function
+                Z.append([i, j, self.__get_merge_height(subtree[n]), len(z)]) # <-- float is required by the dendrogram function
                 index[z] = k
                 subtree[z] = list(z)
                 x = z
                 k += 1
         return Z, leaves
-    def _get_merge_height(self,sub):
+    def __get_merge_height(self,sub):
         # Giora Simchoni's function to get a merge height so that it is unique (probably not that efficient)
         sub_tuple = tuple(sorted([self.node_labels[i] for i in sub]))
         n = len(sub_tuple)

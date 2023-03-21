@@ -1,8 +1,10 @@
-""" Graph Handler method. Creates and manages graph partitioning.
+""" Partition Handler class. Creates and manages graph partitioning.
 
-Michael A. Goodrich
-Brigham Young University
-July 2022 """
+    Michael A. Goodrich
+    Brigham Young University
+    July 2022 for CS 575.
+    Updated March 2023 to interface with Graph Data Science
+"""
 
 from matplotlib import pyplot as plt
 import networkx as nx
