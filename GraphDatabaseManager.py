@@ -22,6 +22,7 @@ class GraphManager:
         else: self.G = nx.empty_graph()
         self.nodes_by_attribute_dict = dict()
         self.__initalizeGraph()
+        self.colormap = ['y' for node in self.G.nodes]
     
     
     ##################
@@ -36,9 +37,9 @@ class GraphManager:
         ax = plt.gca();ax.set_title(title)
         pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
         if with_labels:
-            nx.draw(self.G,pos,node_color = 'y', alpha = 0.8, node_size = 700, with_labels = True)
+            nx.draw(self.G,pos,node_color = self.colormap, alpha = 0.8, node_size = 700, with_labels = True)
         else:
-            nx.draw(self.G,pos,node_color = 'y', alpha = 0.8, node_size = 30)
+            nx.draw(self.G,pos,node_color = self.colormap, alpha = 0.8, node_size = 30)
         plt.show()
     
     def extractBipartiteGraph(self,category_1,category_2):
@@ -78,7 +79,7 @@ class GraphManager:
         plt.show()        
     def exportToGephi(self,gephi_filename):
         #nx.write_gexf(G,gephi_filename)
-        nx.write_gexf(G,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
+        nx.write_gexf(self.G,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
     def exportSubgraphToGephi(self,H,gephi_filename):
         #nx.write_gexf(G,gephi_filename)
         nx.write_gexf(H,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
@@ -95,10 +96,11 @@ class GraphManager:
         plt.figure(figure_number); plt.clf(); plt.ion()
         ax = plt.gca();ax.set_title(title)
         pos = nx.nx_agraph.graphviz_layout(H,prog='neato')
+        new_colormap = ['y' for node in H.nodes]
         if with_labels:
-            nx.draw(H,pos,node_color = 'y', alpha = 0.8, node_size = 700, with_labels = True)
+            nx.draw(H,pos,node_color = new_colormap, alpha = 0.8, node_size = 700, with_labels = True)
         else:
-            nx.draw(H,pos,node_color = 'y', alpha = 0.8, node_size = 30)
+            nx.draw(H,pos,node_color = new_colormap, alpha = 0.8, node_size = 30)
         plt.show() 
         #nx.write_gexf(H,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
         return H

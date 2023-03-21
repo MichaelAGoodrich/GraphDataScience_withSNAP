@@ -20,6 +20,6 @@ def main():
     #manager.ShowUnifiedGraph()
     #manager.ShowAllBipartiteGraphs()
     #manager.ShowBipartiteSubgraph('genre')
-    #manager.ShowProjection({'writers','directors'},biggest_component=False)
-    manager.ShowProjection({'casts','directors','writers'},save_subgraph=True)
+    manager.ShowProjection({'writers','directors'},biggest_component=False)
+    #manager.ShowProjection({'casts','directors','writers'},save_subgraph=True)
 main()
