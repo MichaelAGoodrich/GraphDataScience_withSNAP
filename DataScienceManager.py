@@ -39,11 +39,13 @@ class DataScienceManager:
         self.graphDatabase.plotSubgraph(edge_set,title = title, figure_number = self.figure_number,with_labels=False)
         self.figure_number +=1
         self.graphDatabase.pause()
-    def ShowProjection(self,categories,biggest_component = True):
+    def ShowProjection(self,categories,biggest_component = True, save_subgraph = False):
         edge_set = self.graphDatabase.extractProjection(categories)
         title = "Relationships between movie " + str(categories)
-        self.graphDatabase.plotProjection(edge_set,title=title,figure_number = self.figure_number,biggest_component=biggest_component)
+        subgraph = self.graphDatabase.plotProjection(edge_set,title=title,figure_number = self.figure_number,biggest_component=biggest_component)
         self.figure_number +=1
+        if save_subgraph:
+            self.graphDatabase.exportSubgraphToGephi(subgraph)
         self.graphDatabase.pause()
 
     

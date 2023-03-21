@@ -78,8 +78,11 @@ class GraphManager:
         plt.show()        
     def exportToGephi(self,gephi_filename):
         #nx.write_gexf(G,gephi_filename)
+        nx.write_gexf(G,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
+    def exportSubgraphToGephi(self,H,gephi_filename):
+        #nx.write_gexf(G,gephi_filename)
         nx.write_gexf(H,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
-    
+
     def plotProjection(self,edge_set,title = "Network", figure_number = 1, with_labels = False,biggest_component = False):
         H = nx.empty_graph()
         for edge in edge_set:
@@ -98,7 +101,7 @@ class GraphManager:
             nx.draw(H,pos,node_color = 'y', alpha = 0.8, node_size = 30)
         plt.show() 
         #nx.write_gexf(H,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
-    
+        return H
     def pause(self):
         plt.waitforbuttonpress()
 
