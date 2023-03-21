@@ -21,5 +21,6 @@ def main():
     #manager.ShowAllBipartiteGraphs()
     #manager.ShowBipartiteSubgraph('genre')
     manager.ShowProjection({'writers','directors'},biggest_component=False)
+    manager.ShowProjection({'writers','directors'},biggest_component=True)
     #manager.ShowProjection({'casts','directors','writers'},save_subgraph=True)
 main()

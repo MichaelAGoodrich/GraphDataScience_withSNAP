@@ -35,17 +35,20 @@ class DataScienceManager:
     def ShowBipartiteSubgraph(self,category):
         #for category in {'genre','writers','directors','casts'}:
         title = "Links between " + category + " and movie"
-        edge_set = self.graphDatabase.extractBipartiteGraph(category,'rank')
-        self.graphDatabase.plotSubgraph(edge_set,title = title, figure_number = self.figure_number,with_labels=False)
+        bipartite_graph = self.graphDatabase.extractBipartiteGraph(category,'rank')
+        self.graphDatabase.plotSubgraph(bipartite_graph,title = title, figure_number = self.figure_number,with_labels=False)
         self.figure_number +=1
         self.graphDatabase.pause()
     def ShowProjection(self,categories,biggest_component = True, save_subgraph = False):
-        edge_set = self.graphDatabase.extractProjection(categories)
+        projection_graph = self.graphDatabase.extractProjectionGraph(categories)
         title = "Relationships between movie " + str(categories)
-        subgraph = self.graphDatabase.plotProjection(edge_set,title=title,figure_number = self.figure_number,biggest_component=biggest_component)
+        if biggest_component:
+            title = "Largest component of\n" + title
+            projection_graph = self.graphDatabase.extractLargestComponent(projection_graph)
+        self.graphDatabase.plotSubgraph(projection_graph,title=title,figure_number = self.figure_number)
         self.figure_number +=1
         if save_subgraph:
-            self.graphDatabase.exportSubgraphToGephi(subgraph)
+            self.graphDatabase.exportSubgraphToGephi(projection_graph)
         self.graphDatabase.pause()
 
     
