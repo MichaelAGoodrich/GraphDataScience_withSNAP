@@ -48,7 +48,7 @@ class DataScienceManager:
         self.graphDatabase.plotSubgraph(projection_graph,title=title,figure_number = self.figure_number)
         self.figure_number +=1
         if save_subgraph:
-            self.graphDatabase.exportSubgraphToGephi(projection_graph)
+            self.graphDatabase.exportSubgraphToGephi(projection_graph,'filename')
         self.graphDatabase.pause()
 
     
