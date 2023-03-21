@@ -41,10 +41,6 @@ class partitionHandler:
         # see https://github.com/taynaud/python-louvain
         color_map = self.color_map
         partition = community_louvain.best_partition(self.G)
-        #partition = nx_comm.louvain_communities(self.G)
-        #print(partition)
-        #print(len(partition))
-        #print('there are ',len(partition), ' partitions')
         for node in partition:
             val = partition.get(node)
             color_map[node-1] = self.color_template[val%len(self.color_template)]

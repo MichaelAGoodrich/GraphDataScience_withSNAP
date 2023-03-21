@@ -23,4 +23,10 @@ def main():
     manager.ShowProjection({'writers','directors'},biggest_component=False,pause=False)
     manager.ShowProjection({'writers','directors'},biggest_component=True,pause=True)
     #manager.ShowProjection({'casts','directors','writers'},save_subgraph=True)
+
+    """ TODO: 
+        • Save the projection graph in the DataScienceManager when it is formed.
+        • Get colors from the PartitionUtilities code base, and show graph with these colors.
+        • Or, turn on the ability to view communities when projections are shown    
+    """
 main()
