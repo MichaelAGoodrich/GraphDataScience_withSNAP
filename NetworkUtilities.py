@@ -23,22 +23,21 @@ class networkHandler:
         self.color_template = [v for k,v in mcolors.TABLEAU_COLORS.items()]
         # For other color palettes see https://matplotlib.org/stable/gallery/color/named_colors.html 
 
-    """ Public Methods"""
+    ##################
+    # Public Methods #
+    ##################
     def showDendrogram(self,figureNumber = 1,wait_for_button = False):
         ##### Don't run this for large graphs. 
         ##### The partitioning is done using Girvan-Newman
         myHandler = DendrogramHandler(self.G)
         Z = myHandler.getLinkMatrix()
-        ZLabels = myHandler.getLinkMatrixLabels()
         plt.figure(figureNumber);plt.clf()
+        #ZLabels = myHandler.getLinkMatrixLabels()
         #dendrogram(Z, labels=ZLabels)
         dendrogram(Z)
         if wait_for_button == True: plt.waitforbuttonpress()
         else: plt.waitforbuttonpress(0.001)
         del myHandler
-    
-    
-    """" Public community detection algorithms """
     def getAgentColors_from_LouvainCommunities(self):
         """ Use the Louvain partition method to break the graph into communities """
         # Louvain method pip install python-louvain
@@ -58,18 +57,31 @@ class networkHandler:
         """ Use the Girvan Newman betweeness-based algorithm to partition graph """
         # https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.community.centrality.girvan_newman.html#networkx.algorithms.community.centrality.girvan_newman
         comp = girvan_newman(self.G)
-        communities = self._getCommunityWith_N_Partitions(comp,numPartitions)
-        color_map = self._getColorMapFromCommunities(communities)
+        communities = self.__getCommunityWith_N_Partitions(comp,numPartitions)
+        color_map = self.__getColorMapFromCommunities(communities)
         return color_map, communities
 
-    """ Private methods """
-    def _getCommunityWith_N_Partitions(self,all_communities,numPartitions):
+    #########################
+    # Unimplemented Methods #
+    #########################
+    def getNetworkStatistics(self):
+        # You should use this method to gather the network statistics
+        # that you care about.
+        print("Degree assortativity is ",nx.degree_assortativity_coefficient(self.G))
+        print("\tA positive sign means the network is assortative,")
+        print("\tand a negative sign means the network is disassortative")
+        #raise NotImplementedError
+
+    ##################
+    # Private Methods #
+    ##################
+    def __getCommunityWith_N_Partitions(self,all_communities,numPartitions):
         for com in all_communities:
             if len(list(com)) == numPartitions:
                 communities = list(com)
                 break
         return communities
-    def _getColorMapFromCommunities(self,communities):
+    def __getColorMapFromCommunities(self,communities):
         color_map = self.color_map
         partition_number = 0
         for partition in communities: 

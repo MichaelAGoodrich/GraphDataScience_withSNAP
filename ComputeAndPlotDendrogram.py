@@ -9,8 +9,7 @@ https://stackoverflow.com/questions/59821151/plot-the-dendrogram-of-communities-
 Thank you Giora Simchoni
 """
 import matplotlib as mpl
-mpl.use('tkagg')
-from matplotlib import pyplot as plt
+import community as community_louvain
 import networkx as nx
 from itertools import chain, combinations
 #from scipy.cluster.hierarchy import dendrogram
@@ -20,7 +19,8 @@ class DendrogramHandler:
     def __init__(self,G):
         self.G = G
         self.communities = self.__getGirvanNewmanCommunities()
-        # TODO: make this so it can use Louvain communities
+        # TODO: fix this so that it can use Louvain Communities
+        #self.communities = self.__getLouvainCommunities()
         self.node_id_to_children, self.node_labels = self.__getNode_id_to_children_dict()
         self.subset_rank_dict = self.__getSubset_rank_dict()
         self.Z, self.leaves = self.__getLinkMatrix()
@@ -30,6 +30,9 @@ class DendrogramHandler:
     def getLinkMatrixLabels(self): return [self.node_labels[node_id] for node_id in self.leaves]
      
     """ Private methods """
+    def __getLouvainCommunities(self):
+        communities = community_louvain.best_partition(self.G)
+        return communities
     def __getGirvanNewmanCommunities(self):
         # Get communities using edge betweenness algorithm from Girvan and Newman
         communities = list(nx.algorithms.community.centrality.girvan_newman(self.G))
