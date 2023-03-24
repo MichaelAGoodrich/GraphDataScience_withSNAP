@@ -59,26 +59,16 @@ class GraphManager:
         else:
             nx.draw(self.G,pos,node_color = self.colormap, alpha = 0.8, node_size = 30)
         plt.show()                           
-    def plotSubgraph(self,subgraph,title = "Network", figure_number = 1, with_labels = False):
+    def plotSubgraph(self, subgraph, colormap = 'y', title = "Network", figure_number = 1, with_labels = False):
         plt.figure(figure_number); plt.clf(); plt.ion()
         ax = plt.gca();ax.set_title(title)
         pos = nx.nx_agraph.graphviz_layout(subgraph,prog='neato')
         if with_labels:
-            nx.draw(subgraph,pos,node_color = 'y', alpha = 0.8, node_size = 700, with_labels = True)
+            nx.draw(subgraph,pos,node_color = colormap, alpha = 0.8, node_size = 700, with_labels = True)
         else:
-            nx.draw(subgraph,pos,node_color = 'y', alpha = 0.8, node_size = 30)
+            nx.draw(subgraph,pos,node_color = colormap, alpha = 0.8, node_size = 30)
         plt.show()        
-    def plotSubgraph(self,subgraph,title = "Network", figure_number = 1, with_labels = False):
-        plt.figure(figure_number); plt.clf(); plt.ion()
-        ax = plt.gca();ax.set_title(title)
-        pos = nx.nx_agraph.graphviz_layout(subgraph,prog='neato')
-        new_colormap = ['y' for node in subgraph.nodes]
-        if with_labels:
-            nx.draw(subgraph,pos,node_color = new_colormap, alpha = 0.8, node_size = 700, with_labels = True)
-        else:
-            nx.draw(subgraph,pos,node_color = new_colormap, alpha = 0.8, node_size = 30)
-        plt.show() 
-        #nx.write_gexf(H,"/Users/mike/Dropbox/Mac/Documents/Classes/CS 575/Winter 2023/Code/GraphDataScience_withSNAP/figures/MoviePersonnelGraph.gexf")   
+       
         return subgraph
     def pause(self):
         plt.waitforbuttonpress()
