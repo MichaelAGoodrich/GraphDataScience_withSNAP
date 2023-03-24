@@ -7,6 +7,7 @@
 """
 
 from matplotlib import pyplot as plt
+import matplotlib.colors as mcolors
 import networkx as nx
 from ComputeAndPlotDendrogram import *
 from scipy.cluster.hierarchy import dendrogram
@@ -19,8 +20,9 @@ class networkHandler:
         self.color_map = ['y' for node in self.G]
         self.pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
         self.title = 'Network with' + str(len(self.G.nodes)) + ' agents'
+        self.color_template = [v for k,v in mcolors.TABLEAU_COLORS.items()]
+        # For other color palettes see https://matplotlib.org/stable/gallery/color/named_colors.html 
 
-        #print(self.G.nodes())
     """ Public Methods"""
     def showDendrogram(self,figureNumber = 1,wait_for_button = False):
         ##### Don't run this for large graphs. 
@@ -35,17 +37,22 @@ class networkHandler:
         else: plt.waitforbuttonpress(0.001)
         del myHandler
     
+    
     """" Public community detection algorithms """
     def getAgentColors_from_LouvainCommunities(self):
         """ Use the Louvain partition method to break the graph into communities """
         # Louvain method pip install python-louvain
         # see https://arxiv.org/pdf/0803.0476.pdf
         # see https://github.com/taynaud/python-louvain
-        color_map = self.color_map
+        color_map_dict = dict()
         partition = community_louvain.best_partition(self.G)
-        for node in partition:
+        #print(type(partition))
+        for node in partition.keys():
             val = partition.get(node)
-            color_map[node-1] = self.color_template[val%len(self.color_template)]
+            color_map_dict[node] = self.color_template[val%len(self.color_template)]
+        color_map = []
+        for node in self.G:
+            color_map.append(color_map_dict[node])
         return color_map
     def getAgentColors_from_GirvanNewmanCommunities(self,numPartitions = 4):
         """ Use the Girvan Newman betweeness-based algorithm to partition graph """
@@ -71,7 +78,5 @@ class networkHandler:
                 color_map[node] = self.color_template[partition_number%len(self.color_template)]
             partition_number += 1
         return color_map
-    def __getAdjacencyMatrix(self):
-        """ Return the adjacency matrix for the graph as a sparse scipy matrix """
-        return nx.adj_matrix(self.G)
+    
     
