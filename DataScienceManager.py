@@ -33,7 +33,7 @@ class DataScienceManager:
     ###########################
     def ShowUnifiedGraph(self,pause=True):
         title = "Relationships with Movies"
-        self.graphDatabase.plotGraphDatabase(title = title, figure_number = self.figure_number,wait_for_button=False)
+        self.graphDatabase.plotGraphDatabase(title = title, figure_number = self.figure_number)
         self.figure_number +=1
         if pause:
             self.graphDatabase.pause()
