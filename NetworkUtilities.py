@@ -17,27 +17,56 @@ from networkx.algorithms.community.centrality import girvan_newman
 class networkHandler:
     def __init__(self,G):
         self.G = G
-        self.color_map = ['y' for node in self.G]
+        self.color_map = ['y' for node in list(self.G.nodes)]
         self.pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
         self.title = 'Network with' + str(len(self.G.nodes)) + ' agents'
         self.color_template = [v for k,v in mcolors.TABLEAU_COLORS.items()]
+        self.figure_number = 1
         # For other color palettes see https://matplotlib.org/stable/gallery/color/named_colors.html 
 
-    ##################
-    # Public Methods #
-    ##################
-    def showDendrogram(self,figureNumber = 1,wait_for_button = False):
+    ###########################
+    # Public Plotting Methods #
+    ###########################
+    def showNetwork(self, colormap = None, title = "Network", with_labels = False, pause = False):
+        if colormap is None: colormap = self.color_map
+        plt.figure(self.figure_number);plt.clf();plt.ion();self.figure_number += 1
+        ax = plt.gca();ax.set_title(title)
+        if with_labels:
+            nx.draw(self.G,self.pos,node_color = colormap, alpha = 0.8, node_size = 700, with_labels = True)
+        else:
+            nx.draw(self.G,self.pos,node_color = colormap, alpha = 0.8, node_size = 30)
+        if pause: plt.waitforbuttonpress()
+        else: plt.waitforbuttonpress(0.001)     
+    def showDendrogram(self,wait_for_button = False):
         ##### Don't run this for large graphs. 
         ##### The partitioning is done using Girvan-Newman
         myHandler = DendrogramHandler(self.G)
         Z = myHandler.getLinkMatrix()
-        plt.figure(figureNumber);plt.clf()
+        plt.figure(self.figure_number);plt.clf();self.figure_number += 1
         #ZLabels = myHandler.getLinkMatrixLabels()
         #dendrogram(Z, labels=ZLabels)
         dendrogram(Z)
         if wait_for_button == True: plt.waitforbuttonpress()
         else: plt.waitforbuttonpress(0.001)
         del myHandler
+    def showSubgraph(self,subgraph):
+        """ plot the subgraph of self.G, but use the positions
+            colormap from self.
+        """
+        if set(subgraph.nodes()).issubset(set(self.G.nodes())) or set(subgraph.edges()).issubset(set(self.G.nodes())):
+            raise ValueError
+        pos_dict = dict()
+        color_map = []
+        for node in subgraph.nodes():
+            pos_dict[node] = self.pos[node]
+            
+            
+
+        
+
+    ##############################
+    # Pubioc Getters and Setters #
+    ##############################
     def getAgentColors_from_LouvainCommunities(self):
         """ Use the Louvain partition method to break the graph into communities """
         # Louvain method pip install python-louvain
@@ -60,10 +89,13 @@ class networkHandler:
         communities = self.__getCommunityWith_N_Partitions(comp,numPartitions)
         color_map = self.__getColorMapFromCommunities(communities)
         return color_map, communities
-
-    #########################
-    # Unimplemented Methods #
-    #########################
+    def getKCoreSubgraph(self):
+        H = nx.k_core(self.G) # when no value for k is given, the main core is returned
+        return H
+    def setAgentColors(self,colormap): self.color_map = colormap
+    #############################
+    # Under implemented Methods #
+    #############################
     def getNetworkStatistics(self):
         # You should use this method to gather the network statistics
         # that you care about.

@@ -42,36 +42,9 @@ class GraphManager:
         largest_cc = max(nx.connected_components(subgraph),key=len)
         subgraph = subgraph.subgraph(largest_cc).copy()
         return subgraph
+    def getGraph_of_Database(self):
+        return self.G
 
-    #############################
-    # Public Plotting Methods   #
-    #############################
-    def plotGraphDatabase(self,title = "Network", figure_number = 1, with_labels = False):
-        """ Only use for small databases.
-            For large databases, export to .gexf
-            and view using GEPHI
-        """
-        plt.figure(figure_number); plt.clf(); plt.ion()
-        ax = plt.gca();ax.set_title(title)
-        pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
-        if with_labels:
-            nx.draw(self.G,pos,node_color = self.colormap, alpha = 0.8, node_size = 700, with_labels = True)
-        else:
-            nx.draw(self.G,pos,node_color = self.colormap, alpha = 0.8, node_size = 30)
-        plt.show()                           
-    def plotSubgraph(self, subgraph, colormap = 'y', title = "Network", figure_number = 1, with_labels = False):
-        plt.figure(figure_number); plt.clf(); plt.ion()
-        ax = plt.gca();ax.set_title(title)
-        pos = nx.nx_agraph.graphviz_layout(subgraph,prog='neato')
-        if with_labels:
-            nx.draw(subgraph,pos,node_color = colormap, alpha = 0.8, node_size = 700, with_labels = True)
-        else:
-            nx.draw(subgraph,pos,node_color = colormap, alpha = 0.8, node_size = 30)
-        plt.show()        
-       
-        return subgraph
-    def pause(self):
-        plt.waitforbuttonpress()
 
     ##################################
     # Miscellaneous Public Utilities #
