@@ -36,7 +36,7 @@ class networkHandler:
         else:
             nx.draw(self.G,self.pos,node_color = colormap, alpha = 0.8, node_size = 30)
         if pause: plt.waitforbuttonpress()
-        else: plt.waitforbuttonpress(0.001)     
+        else: plt.show()     
     def showDendrogram(self,wait_for_button = False):
         ##### Don't run this for large graphs. 
         ##### The partitioning is done using Girvan-Newman
@@ -47,7 +47,7 @@ class networkHandler:
         #dendrogram(Z, labels=ZLabels)
         dendrogram(Z)
         if wait_for_button == True: plt.waitforbuttonpress()
-        else: plt.waitforbuttonpress(0.001)
+        else: plt.show()
         del myHandler
     def showSubgraph(self,subgraph):
         """ plot the subgraph of self.G, but use the positions
@@ -55,11 +55,16 @@ class networkHandler:
         """
         if set(subgraph.nodes()).issubset(set(self.G.nodes())) or set(subgraph.edges()).issubset(set(self.G.nodes())):
             raise ValueError
+        subgraph_nodes = set(subgraph.nodes)
         pos_dict = dict()
         color_map = []
-        for node in subgraph.nodes():
-            pos_dict[node] = self.pos[node]
-            
+        for node_index in range(len(self.G.nodes)):
+            node = self.G[node_index]
+            if node in subgraph_nodes:
+                pos_dict[node] = self.pos[node]
+                color_map.append(self.color_map[node_index])
+        nx.draw(subgraph,pos=pos_dict,node_color = color_map, alpha = 0.7, node_size = 30)
+        plt.show()
             
 
         
