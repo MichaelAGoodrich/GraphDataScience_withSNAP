@@ -17,7 +17,8 @@ from networkx.algorithms.community.centrality import girvan_newman
 class networkHandler:
     def __init__(self,G):
         self.G = G
-        self.color_map = ['y' for node in list(self.G.nodes)]
+        self.colormap_dict = dict([(node,'y') for node in list(self.G.nodes)])
+        self.color_map = self.__colormap_dict_to_colormap_list()
         self.pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
         self.title = 'Network with' + str(len(self.G.nodes)) + ' agents'
         self.color_template = [v for k,v in mcolors.TABLEAU_COLORS.items()]
@@ -52,65 +53,65 @@ class networkHandler:
         if wait_for_button == True: plt.waitforbuttonpress()
         else: plt.show()
         del myHandler
-    def show_kCore_Subgraph(self,pause = False):
+    def show_kCore_Subgraph(self,title="k-Core",bigNodes = False, pause = False, xlim=None, ylim=None):
         """ plot the subgraph of self.G, but use the positions
             colormap from self.
         """
-        subgraph = self.getKCoreSubgraph(k=4)
-        subgraph_nodes = set(subgraph.nodes)
+        subgraph = self.getKCoreSubgraph()
         pos_dict = dict()
-        color_map = []
-        node_count = 0
-        for node in list(self.G.nodes):
-            if node in subgraph_nodes:
-                pos_dict[node] = self.pos[node]
-                color_map.append(self.color_map[node_count])
-            node_count += 1
+        colormap_dict = dict()
+        for node in list(subgraph.nodes):
+            pos_dict[node] = self.pos[node]
+            colormap_dict[node] = self.colormap_dict[node]
         plt.figure(self.figure_number); plt.clf; plt.ion()
-        nx.draw(subgraph,pos=pos_dict,node_color = color_map, alpha = 0.7, node_size = 200)
+        plt.title(title)
+        if xlim is not None and ylim is not None:
+            ax = plt.gca()
+            ax.set_xlim(xlim); ax.set_ylim(ylim)
+        colormap_list = [colormap_dict[key] for key in list(subgraph.nodes)]
+        if bigNodes:
+            nx.draw(subgraph,pos=pos_dict,node_color = colormap_list, alpha = 0.7, node_size = 200)
+        else:
+            nx.draw(subgraph,pos=pos_dict,node_color = colormap_list, alpha = 0.7, node_size = 30)
         if pause: plt.waitforbuttonpress()
         else: plt.show()
-            
-
-        
 
     ##############################
     # Public Getters and Setters #
     ##############################
+    def setFigureNumber(self,figure_number): self.figure_number = figure_number
     def getFigureData(self):
         ax = plt.gca()
         y_limit = ax.get_ylim()
         x_limit = ax.get_xlim()
         return x_limit,y_limit
-    def getAgentColors_from_LouvainCommunities(self):
+    def getAgentColormapDict_from_LouvainCommunities(self):
         """ Use the Louvain partition method to break the graph into communities """
         # Louvain method pip install python-louvain
         # see https://arxiv.org/pdf/0803.0476.pdf
         # see https://github.com/taynaud/python-louvain
         color_map_dict = dict()
         partition = community_louvain.best_partition(self.G)
-        #print(type(partition))
         for node in partition.keys():
             val = partition.get(node)
             color_map_dict[node] = self.color_template[val%len(self.color_template)]
-        color_map = []
-        for node in self.G:
-            color_map.append(color_map_dict[node])
-        return color_map
-    def getAgentColors_from_GirvanNewmanCommunities(self,numPartitions = 4):
+        return color_map_dict
+    def getAgentColormapDict_from_GirvanNewmanCommunities(self,numPartitions = 4):
         """ Use the Girvan Newman betweeness-based algorithm to partition graph """
         # https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.community.centrality.girvan_newman.html#networkx.algorithms.community.centrality.girvan_newman
         comp = girvan_newman(self.G)
         communities = self.__getCommunityWith_N_Partitions(comp,numPartitions)
-        color_map = self.__getColorMapFromCommunities(communities)
-        return color_map, communities
+        colormap_dict = self.__getColormapDictFromCommunities(communities)
+        return colormap_dict
     def getKCoreSubgraph(self,k=None):
         if k is None:
             H = nx.k_core(self.G) # when no value for k is given, the main core is returned
         else: 
             H = nx.k_core(self.G,k)
         return H
-    def setAgentColors(self,colormap): self.color_map = colormap
+    def setAgentColors(self,colormap_dict): 
+        self.colormap_dict = colormap_dict
+        self.color_map = self.__colormap_dict_to_colormap_list()
     #############################
     # Under implemented Methods #
     #############################
@@ -122,23 +123,26 @@ class networkHandler:
         print("\tand a negative sign means the network is disassortative")
         #raise NotImplementedError
 
-    ##################
+    ###################
     # Private Methods #
-    ##################
+    ###################
+    def __colormap_dict_to_colormap_list(self):
+        colormap_list = [self.colormap_dict[key] for key in list(self.G.nodes)]
+        return list(colormap_list)
     def __getCommunityWith_N_Partitions(self,all_communities,numPartitions):
         for com in all_communities:
             if len(list(com)) == numPartitions:
                 communities = list(com)
                 break
         return communities
-    def __getColorMapFromCommunities(self,communities):
-        color_map = self.color_map
+    def __getColormapDictFromCommunities(self,communities):
+        colormap_dict = dict()
         partition_number = 0
         for partition in communities: 
             #print("***\n",partition)
             for node in partition:
-                color_map[node] = self.color_template[partition_number%len(self.color_template)]
+                colormap_dict[node] = self.color_template[partition_number%len(self.color_template)]
             partition_number += 1
-        return color_map
+        return colormap_dict
     
     

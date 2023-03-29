@@ -32,24 +32,39 @@ def main():
     ####################################
     wd_network_handler.getNetworkStatistics()
     wd_network_handler.showDendrogram(wait_for_button = False)
-    wd_colormap = wd_network_handler.getAgentColors_from_LouvainCommunities()
+    wd_colormap_dict = wd_network_handler.getAgentColormapDict_from_LouvainCommunities()
     writer_director_title = "Louvain communities for " + writer_director_title
-    wd_network_handler.setAgentColors(wd_colormap)
+    #wd_colormap_dict = wd_network_handler.getAgentColormapDict_from_GirvanNewmanCommunities()
+    #writer_director_title = "Girvan-Newman communities for " + writer_director_title
+    wd_network_handler.setAgentColors(wd_colormap_dict)
     wd_network_handler.showNetwork(title=writer_director_title, pause=False,advanceFigure=False)
     #wd_network_handler.show_kCore_Subgraph(pause=True)
     #wd_network_handler.advanceFigureCounter()
-    print(wd_network_handler.getFigureData())
-    wd_network_handler.show_kCore_Subgraph(pause=True)
+
+    # Get information and plot largest k-core over the top of the previous figure
+    xlim,ylim = wd_network_handler.getFigureData()
+    writer_director_title = "Largest k-core for " + writer_director_title
+    wd_network_handler.show_kCore_Subgraph(bigNodes = True,xlim = xlim, ylim = ylim)
+    # Plot the k-core by itself
+    wd_network_handler.advanceFigureCounter()
+    wd_network_handler.show_kCore_Subgraph(title = writer_director_title, pause=False,xlim = xlim, ylim = ylim)
+    
     
     ###################################################
     # Demonstrate basic graph data science operations #
     # For large graph                                 #
     ###################################################
-    #writer_director_cast_projection, writer_director_cast_title = manager.getProjection({'casts','directors','writers'},biggest_component=True)
-    #wdc_network_handler = networkHandler(writer_director_cast_projection)
-    #wdc_network_handler.getNetworkStatistics()
-    #wdc_colormap = wdc_network_handler.getAgentColors_from_LouvainCommunities()
-    #writer_director_cast_title = "Louvain communities for " + writer_director_cast_title
-    #wdc_network_handler.showNetwork(colormap = wdc_colormap, title=writer_director_cast_title, pause=True)
+    writer_director_cast_projection, writer_director_cast_title = manager.getProjection({'casts','directors','writers'},biggest_component=True)
+    wdc_network_handler = networkHandler(writer_director_cast_projection)
+    wdc_network_handler.setFigureNumber(5)
+    wdc_network_handler.getNetworkStatistics()
+    wdc_colormap_dict = wdc_network_handler.getAgentColormapDict_from_LouvainCommunities()
+    writer_director_cast_title = "Louvain communities for " + writer_director_cast_title
+    wdc_network_handler.setAgentColors(wdc_colormap_dict)
+    wdc_network_handler.showNetwork(title=writer_director_cast_title, pause=False)
+    xlim,ylim = wdc_network_handler.getFigureData()
+    writer_director_cast_title = "Largest k-core for " + writer_director_cast_title
+    wdc_network_handler.show_kCore_Subgraph(title = writer_director_cast_title, pause=True,xlim = xlim, ylim = ylim)
+
     
 main()
