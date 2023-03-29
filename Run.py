@@ -34,18 +34,19 @@ def main():
     wd_network_handler.showDendrogram(wait_for_button = False)
     wd_colormap = wd_network_handler.getAgentColors_from_LouvainCommunities()
     writer_director_title = "Louvain communities for " + writer_director_title
-    wd_network_handler.showNetwork(colormap = wd_colormap, title=writer_director_title, pause=True)
-    
+    wd_network_handler.setAgentColors(wd_colormap)
+    wd_network_handler.showNetwork(pause=False)
+    wd_network_handler.show_kCore_Subgraph(pause=True)
 
     ###################################################
     # Demonstrate basic graph data science operations #
     # For large graph                                 #
     ###################################################
-    writer_director_cast_projection, writer_director_cast_title = manager.getProjection({'casts','directors','writers'},biggest_component=True)
-    wdc_network_handler = networkHandler(writer_director_cast_projection)
-    wdc_network_handler.getNetworkStatistics()
-    wdc_colormap = wdc_network_handler.getAgentColors_from_LouvainCommunities()
-    writer_director_cast_title = "Louvain communities for " + writer_director_cast_title
-    wdc_network_handler.showNetwork(colormap = wdc_colormap, title=writer_director_cast_title, pause=True)
+    #writer_director_cast_projection, writer_director_cast_title = manager.getProjection({'casts','directors','writers'},biggest_component=True)
+    #wdc_network_handler = networkHandler(writer_director_cast_projection)
+    #wdc_network_handler.getNetworkStatistics()
+    #wdc_colormap = wdc_network_handler.getAgentColors_from_LouvainCommunities()
+    #writer_director_cast_title = "Louvain communities for " + writer_director_cast_title
+    #wdc_network_handler.showNetwork(colormap = wdc_colormap, title=writer_director_cast_title, pause=True)
     
 main()

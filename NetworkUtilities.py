@@ -49,28 +49,30 @@ class networkHandler:
         if wait_for_button == True: plt.waitforbuttonpress()
         else: plt.show()
         del myHandler
-    def showSubgraph(self,subgraph):
+    def show_kCore_Subgraph(self,pause = False):
         """ plot the subgraph of self.G, but use the positions
             colormap from self.
         """
-        if set(subgraph.nodes()).issubset(set(self.G.nodes())) or set(subgraph.edges()).issubset(set(self.G.nodes())):
-            raise ValueError
+        subgraph = self.getKCoreSubgraph(k=4)
         subgraph_nodes = set(subgraph.nodes)
         pos_dict = dict()
         color_map = []
-        for node_index in range(len(self.G.nodes)):
-            node = self.G[node_index]
+        node_count = 0
+        for node in list(self.G.nodes):
             if node in subgraph_nodes:
                 pos_dict[node] = self.pos[node]
-                color_map.append(self.color_map[node_index])
-        nx.draw(subgraph,pos=pos_dict,node_color = color_map, alpha = 0.7, node_size = 30)
-        plt.show()
+                color_map.append(self.color_map[node_count])
+            node_count += 1
+        plt.figure(self.figure_number-1); plt.clf; plt.ion();self.figure_number+=1
+        nx.draw(subgraph,pos=pos_dict,node_color = color_map, alpha = 0.7, node_size = 200)
+        if pause: plt.waitforbuttonpress()
+        else: plt.show()
             
 
         
 
     ##############################
-    # Pubioc Getters and Setters #
+    # Public Getters and Setters #
     ##############################
     def getAgentColors_from_LouvainCommunities(self):
         """ Use the Louvain partition method to break the graph into communities """
@@ -94,8 +96,11 @@ class networkHandler:
         communities = self.__getCommunityWith_N_Partitions(comp,numPartitions)
         color_map = self.__getColorMapFromCommunities(communities)
         return color_map, communities
-    def getKCoreSubgraph(self):
-        H = nx.k_core(self.G) # when no value for k is given, the main core is returned
+    def getKCoreSubgraph(self,k=None):
+        if k is None:
+            H = nx.k_core(self.G) # when no value for k is given, the main core is returned
+        else: 
+            H = nx.k_core(self.G,k)
         return H
     def setAgentColors(self,colormap): self.color_map = colormap
     #############################

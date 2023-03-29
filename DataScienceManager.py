@@ -32,7 +32,7 @@ class DataScienceManager:
         title = "Entire graph database"
         if biggest_component:
             title = "Largest component of\n" + title
-            projection_graph = self.graphDatabase.extractLargestComponent(projection_graph)
+            graph = self.graphDatabase.extractLargestComponent(projection_graph)
         return graph, title
     def getBipartiteGraph(self,category):
         title = "Links between " + category + " and movie"
