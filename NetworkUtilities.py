@@ -27,9 +27,12 @@ class networkHandler:
     ###########################
     # Public Plotting Methods #
     ###########################
-    def showNetwork(self, colormap = None, title = "Network", with_labels = False, pause = False):
+    def advanceFigureCounter(self):
+        self.figure_number += 1
+    def showNetwork(self, colormap = None, title = "Network", with_labels = False, pause = False, advanceFigure = True):
         if colormap is None: colormap = self.color_map
-        plt.figure(self.figure_number);plt.clf();plt.ion();self.figure_number += 1
+        plt.figure(self.figure_number);plt.clf();plt.ion()
+        if advanceFigure: self.figure_number += 1
         ax = plt.gca();ax.set_title(title)
         if with_labels:
             nx.draw(self.G,self.pos,node_color = colormap, alpha = 0.8, node_size = 700, with_labels = True)
@@ -63,7 +66,7 @@ class networkHandler:
                 pos_dict[node] = self.pos[node]
                 color_map.append(self.color_map[node_count])
             node_count += 1
-        plt.figure(self.figure_number-1); plt.clf; plt.ion();self.figure_number+=1
+        plt.figure(self.figure_number); plt.clf; plt.ion()
         nx.draw(subgraph,pos=pos_dict,node_color = color_map, alpha = 0.7, node_size = 200)
         if pause: plt.waitforbuttonpress()
         else: plt.show()
@@ -74,6 +77,11 @@ class networkHandler:
     ##############################
     # Public Getters and Setters #
     ##############################
+    def getFigureData(self):
+        ax = plt.gca()
+        y_limit = ax.get_ylim()
+        x_limit = ax.get_xlim()
+        return x_limit,y_limit
     def getAgentColors_from_LouvainCommunities(self):
         """ Use the Louvain partition method to break the graph into communities """
         # Louvain method pip install python-louvain

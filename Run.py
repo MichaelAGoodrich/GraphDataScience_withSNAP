@@ -35,9 +35,12 @@ def main():
     wd_colormap = wd_network_handler.getAgentColors_from_LouvainCommunities()
     writer_director_title = "Louvain communities for " + writer_director_title
     wd_network_handler.setAgentColors(wd_colormap)
-    wd_network_handler.showNetwork(pause=False)
+    wd_network_handler.showNetwork(title=writer_director_title, pause=False,advanceFigure=False)
+    #wd_network_handler.show_kCore_Subgraph(pause=True)
+    #wd_network_handler.advanceFigureCounter()
+    print(wd_network_handler.getFigureData())
     wd_network_handler.show_kCore_Subgraph(pause=True)
-
+    
     ###################################################
     # Demonstrate basic graph data science operations #
     # For large graph                                 #
