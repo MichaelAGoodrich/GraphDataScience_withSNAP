@@ -40,7 +40,10 @@ class networkHandler:
         else:
             nx.draw(self.G,self.pos,node_color = colormap, alpha = 0.8, node_size = 30)
         if pause: plt.waitforbuttonpress()
-        else: plt.show()     
+        else: plt.show()   
+        y_limit = ax.get_ylim()
+        x_limit = ax.get_xlim()
+        return x_limit,y_limit  
     def showDendrogram(self,wait_for_button = False):
         ##### Don't run this for large graphs. 
         ##### The partitioning is done using Girvan-Newman
@@ -53,11 +56,11 @@ class networkHandler:
         if wait_for_button == True: plt.waitforbuttonpress()
         else: plt.show()
         del myHandler
-    def show_kCore_Subgraph(self,title="k-Core",bigNodes = False, pause = False, xlim=None, ylim=None):
+    def show_kCore_Subgraph(self,k=None, title="k-Core",bigNodes = False, pause = False, xlim=None, ylim=None):
         """ plot the subgraph of self.G, but use the positions
             colormap from self.
         """
-        subgraph = self.getKCoreSubgraph()
+        subgraph = self.getKCoreSubgraph(k=k)
         pos_dict = dict()
         colormap_dict = dict()
         for node in list(subgraph.nodes):
