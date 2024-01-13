@@ -19,7 +19,8 @@ class networkHandler:
         self.G = G
         self.colormap_dict = dict([(node,'y') for node in list(self.G.nodes)])
         self.color_map = self.__colormap_dict_to_colormap_list()
-        self.pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
+        #self.pos = nx.nx_agraph.graphviz_layout(self.G,prog='neato')
+        self.pos = nx.nx_pydot.graphviz_layout(G,prog="neato")
         self.title = 'Network with' + str(len(self.G.nodes)) + ' agents'
         self.color_template = [v for k,v in mcolors.TABLEAU_COLORS.items()]
         self.figure_number = 1
